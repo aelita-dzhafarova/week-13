@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <!-- <style>
+            #chat {
+                display: flex;
+            }
+
+            h1, h2, button, p {
+                margin-left: 30px;
+            }
+
+            .chat_input {
+                margin-right: 100px;
+            }
+            
+            input {
+                width: 100%;
+            }
+
+            .input {
+                margin: 30px;
+            }
+
+            #comment {
+                min-width: 100%;
+                max-width: 100%;
+                min-height: 100px;
+            }
+
+            .output {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+
+            img {
+                width: 100px;
+                height: 100px;
+                justify-self: center;
+            }
+
+            #name_output {
+                justify-self: start;
+                align-self: center;
+                margin: 0;
+            }
+
+            #comment_output {
+                grid-column: 1 / 3;
+            }
+
+        </style> -->
+
+    </head>
+    <!-- onload="initVar()" : when page is loading,
+        initVar() function executes in order to
+        initialise variables, so that the program
+        works correctly -->
+    <body onload="initVar()">
+        <h1>Сервис комментариев со спам фильтром</h1>
+        <div id="chat">
+            <div class="chat_input">
+                <h2>Оставьте ваш комментарий</h2>
+                <div id="conteneurChk">
+                    <p>Показывать ваше имя?</p>
+                    <input type="checkbox" name='check' onclick="clickOnBox(this)" id="c1" /><label for="c1">Да</label><br/>
+                    <input type="checkbox" name='check' onclick="clickOnBox(this)" id="c2" /><label for="c2">Нет</label>
+                </div>
+                <div class="input">Введите ваше ФИО:</label>
+                    <br>
+                    <input type="text" name="name" id="name" class="name">
+                </div>
+
+                <div class="input">
+                    <label for="avatar">Введите ссылку вашего аватара:</label>
+                    <br>
+                    <input type="text" name="avatar" id="avatar" class="avatar">
+                </div>
+
+                <div class="input">
+                    <label for="comment">Оставьте комментарий</label>
+                    <br>
+                    <textarea name="comment" id="comment" class="comment"></textarea>
+                </div>   
+
+                    <button class="button">Отправить</button>
+            </div>
+
+            <div>
+                <h2>Чат</h2>
+
+                <div class="output"></div>
+
+            </div>
+        </div>
+
+    <script>
+
+            ///////////////////////////////////////
+            // BEGINNING CODE FOR MAX CHECKED BOXES
+
+            let nbMaxChk = 1;
+            
+            let compteChk;
+            
+            /* initVar() : initialise variables when page is loaded.
+            * If not, the user will be able to check
+            * more than nbMaxChk boxes.
+            */
+            
+            function initVar() {
+                let i, n;
+                let tabChecks;
+                
+                compteChk = 0;
+                
+                tabChecks = document.getElementsByName("check");
+                n = tabChecks.length;
+                
+                for (i=0; i<n; i++) {
+                    tabChecks[i].checked = false;
+                }
+            }
+            
+            function clickOnBox(objet) {
+                if (objet.checked)
+                {
+                    if (compteChk == nbMaxChk)
+                    objet.checked = false;
+                    else
+                    compteChk++;
+                }
+                else
+                    compteChk--;
+            }
+            
+            ///////////////////////////////////////
+            // END OF CODE FOR MAX CHECKED BOXES
+
+
+            // 2 fonctions qui mettent la première lettre de chaque mot en majuscule
+            // et enlèvent les espaces en début et fin, et les espaces multiples.
+
+            // Version avec MAP et SLICE
+
+            function titleCase1(str) {
+                return str.toLowerCase().split(' ').map((el) => el.charAt(0).toUpperCase() + el.slice(1)).join(" ");
+            }
+
+            // Version avec FOREACH et REPLACE    
+
+            function titleCase2(str){
+                let words = str.toLowerCase().split(' ');
+
+                let array = [];
+
+                words.forEach(word => {
+                    let firstLetter = word.charAt(0).toUpperCase();
+                    let replacement = word.replace(word.charAt(0), firstLetter);
+
+                    array.push(replacement);
+                });
+
+                return array.join(' ');
+            }
+
+            function removeExtraSpace(str) {
+                str = str.replace(/\s{2,}/g," "); // Enlève les espaces doubles, triples, etc.
+                str = str.replace(/^\s/, ""); // Enlève les espaces au début
+                str = str.replace(/\s$/,""); // Enlève les espaces à la fin
+
+                return str;
+            }
+
+            // ------------
+
+
+            function checkSpam(str) {
+                str = str.replace(/viagra/ig,'***');
+                str = str.replace(/XXX/ig,'***');
+
+                return str;
+            }
+
+            const button = document.querySelector('.button');
+                    
+            button.addEventListener('click', () => {
+
+                const output = document.querySelector('.output');
+
+                if(document.querySelector('.avatar').value !== '') {
+                    const avatar = document.querySelector('.avatar').value;
+                    output.innerHTML += '<img src="' + avatar + '" alt="">';
+                }
+                else {
+                    console.log('<img src=' + getRandomAvatar() + ' alt="" />');
+                    output.innerHTML += '<img src="' + getRandomAvatar() + '"" alt="" />';  
+                }
+
+                const checkboxC2 = document.getElementById('c2').checked;
+                
+                if(document.querySelector('.name').value !== '' && checkboxC2 === true) {
+                    const name = document.querySelector('.name').value;
+                    output.innerHTML += '<p>' + 'Username' + '</p>';
+                } else if(document.querySelector('.name').value !== '') {
+                    const name = document.querySelector('.name').value;
+                    output.innerHTML += '<p>' + removeExtraSpace(titleCase1(name)) + '</p>';
+                }else output.innerHTML += '<p>' + 'Username' + '</p>'; 
+            
+
+                const comment = document.querySelector('.comment').value;
+                output.innerHTML += '<p>' + checkSpam(comment) + '</p>';
+        
+                output.innerHTML += '<p>' + new Date() + '</p>';
+
+            });
+
+            //Renvoie un entier aléatoire entre 0 et max-1
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * max);
+            }
+
+            function getRandomAvatar() {
+                let tabImages = ['orange-cat.jpg', 'orange-cat1.jpg', 'brown-cat.jpg', 'black-cat.jpg', 'black-cat1.jpg'];
+                return "assets/" + tabImages[getRandomInt(tabImages.length)];
+            }
+            
+        </script>
+        
+    </body>
+
+</html>
