@@ -5,25 +5,39 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
-        <!-- <style>
-            #chat {
-                display: flex;
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap');
+
+            * {
+                box-sizing: border-box;
             }
 
-            h1, h2, button, p {
+            h1, h2, h3, p, label, input, button {
+                font-family: 'Montserrat', sans-serif;
+            }
+
+            .container {
                 margin-left: 30px;
+                margin-right: 30px;
+                padding: 0 15px;
+            }
+
+            #chat {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
             }
 
             .chat_input {
                 margin-right: 100px;
             }
-            
-            input {
-                width: 100%;
-            }
 
-            .input {
-                margin: 30px;
+            .input_name {
+                margin-top: 20px;
+            }
+            
+            .input input{
+                width: 100%;
+                margin-bottom: 20px;
             }
 
             #comment {
@@ -34,27 +48,21 @@
 
             .output {
                 display: grid;
-                grid-template-columns: 1fr 1fr 1fr;
-                grid-template-rows: 1fr 1fr;
+                grid-template-columns: 1fr 3fr 1fr;
+                grid-template-rows: 100px 1fr;
+                margin-right: 30px;
             }
+
+            .output_comment {
+                grid-column: 1 / 4;
+            } 
 
             img {
                 width: 100px;
-                height: 100px;
-                justify-self: center;
+                height: 100px;  
             }
 
-            #name_output {
-                justify-self: start;
-                align-self: center;
-                margin: 0;
-            }
-
-            #comment_output {
-                grid-column: 1 / 3;
-            }
-
-        </style> -->
+        </style>
 
     </head>
     <!-- onload="initVar()" : when page is loading,
@@ -62,16 +70,17 @@
         initialise variables, so that the program
         works correctly -->
     <body onload="initVar()">
-        <h1>Сервис комментариев со спам фильтром</h1>
+        <h1 class="container">Сервис комментариев со спам фильтром</h1>
         <div id="chat">
-            <div class="chat_input">
+            <div class="chat_input container">
                 <h2>Оставьте ваш комментарий</h2>
-                <div id="conteneurChk">
+                <div id="conteneurChk container">
                     <p>Показывать ваше имя?</p>
                     <input type="checkbox" name='check' onclick="clickOnBox(this)" id="c1" /><label for="c1">Да</label><br/>
                     <input type="checkbox" name='check' onclick="clickOnBox(this)" id="c2" /><label for="c2">Нет</label>
                 </div>
-                <div class="input">Введите ваше ФИО:</label>
+                <div class="input input_name">
+                    <label for="name">Введите ваше ФИО:</label>
                     <br>
                     <input type="text" name="name" id="name" class="name">
                 </div>
@@ -83,19 +92,18 @@
                 </div>
 
                 <div class="input">
-                    <label for="comment">Оставьте комментарий</label>
+                    <label for="comment">Оставьте комментарий:</label>
                     <br>
                     <textarea name="comment" id="comment" class="comment"></textarea>
                 </div>   
 
-                    <button class="button">Отправить</button>
+                <button class="button">Отправить</button>
             </div>
 
-            <div>
+            <div class="chat_output">
                 <h2>Чат</h2>
-
-                <div class="output"></div>
-
+                <div class="output">
+                </div>
             </div>
         </div>
 
@@ -193,30 +201,33 @@
 
                 const output = document.querySelector('.output');
 
+                // AVATAR
                 if(document.querySelector('.avatar').value !== '') {
                     const avatar = document.querySelector('.avatar').value;
-                    output.innerHTML += '<img src="' + avatar + '" alt="">';
+                    output.innerHTML += '<div class="img-grid"><img src="' + avatar + '" alt=""></div>';
                 }
                 else {
-                    console.log('<img src=' + getRandomAvatar() + ' alt="" />');
-                    output.innerHTML += '<img src="' + getRandomAvatar() + '"" alt="" />';  
+                    console.log('<div class="img-grid"><img src=' + getRandomAvatar() + ' alt="" /></div>');
+                    output.innerHTML += '<div class="img-grid"><img src="' + getRandomAvatar() + '"" alt="" /></div>';  
                 }
 
+                // NAME
                 const checkboxC2 = document.getElementById('c2').checked;
                 
                 if(document.querySelector('.name').value !== '' && checkboxC2 === true) {
                     const name = document.querySelector('.name').value;
-                    output.innerHTML += '<p>' + 'Username' + '</p>';
+                    output.innerHTML += '<div class="name-grid"><p>' + 'Username' + '</p></div>';
                 } else if(document.querySelector('.name').value !== '') {
                     const name = document.querySelector('.name').value;
-                    output.innerHTML += '<p>' + removeExtraSpace(titleCase1(name)) + '</p>';
-                }else output.innerHTML += '<p>' + 'Username' + '</p>'; 
+                    output.innerHTML += '<div class="name-grid"><p>' + removeExtraSpace(titleCase1(name)) + '</p></div>';
+                }else output.innerHTML += '<div class="name-grid"><p>' + 'Username' + '</p></div>'; 
             
+                // DATE
+                output.innerHTML += '<div class="date-grid"><p>' + new Date() + '</p></div>';
 
+                // COMMENT
                 const comment = document.querySelector('.comment').value;
-                output.innerHTML += '<p>' + checkSpam(comment) + '</p>';
-        
-                output.innerHTML += '<p>' + new Date() + '</p>';
+                output.innerHTML += '<div class="output_comment"><p>' + checkSpam(comment) + '</p></div>';
 
             });
 
